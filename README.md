@@ -2,7 +2,7 @@
 ## 懒人学习笔记
 
 
-- [x] [vue3](https://github.com/shengxinjing/my_blog/issues/1) 
+- [x] [vue3](https://github.com/peng92055/study-hard/blob/master/vue3/blog.md) 
 - [ ] http协议
 - [ ] requestIdleCallback
 
