@@ -7,6 +7,8 @@
 - 学习 commander
 - 学习 yeoman  
   * 参考文章 https://www.imooc.com/article/79312
+  * 实现一个Vue Generator模块 https://blog.csdn.net/weixin_45047039/article/details/109715553
+  * 创建sub-generator 来创建组件套件
 
 
 ### 参考文章

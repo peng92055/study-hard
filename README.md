@@ -34,7 +34,7 @@
 - nodejs 常见场景：工具、BFF 应用
 - 学习react源码
 - 云开发总结
-- taro源码学习
+- taro源码学习 taro-cli
 - 构思业务技术解决方案模型
 - react-native 热更新方案  部署独立热更新服务，并打包docker镜像
 - react-native 崩溃日志方案
@@ -44,5 +44,8 @@
 - 字节跳动面试官，我也实现了大文件上传和断点续传 https://juejin.im/post/6844904055819468808
 - 使用XXX框架，并增加loader/plugin/中间件/npm 封装了什么功能
 - 准备一些runtime的插件 比如做一个UBB的js-parser或者RN插件
-
+- 打包优化 例如做一些针对webpack打包的优化 提升打包编译效率
+- 借鉴vue中 虚拟dom的类型PatchFlags的定义 0<<1 优化权限判断
+- 借鉴浏览器缓存机制优化app数据字典获取机制
+- 制作rn插件，js和native交互，反射~
 
