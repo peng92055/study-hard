@@ -3,7 +3,7 @@
 
 
 - [x] [vue3](https://github.com/peng92055/study-hard/blob/master/vue3/blog.md) 
-- [ ] http协议
+- [ ] [HTTP协议及缓存机制](https://github.com/peng92055/study-hard/blob/master/专题/HTTP及缓存机制.md) 
 - [ ] requestIdleCallback
 
 ## 看书计划

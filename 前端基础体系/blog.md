@@ -1,4 +1,4 @@
-# 重学前端
+# 前端基础知识体系
 
 ## JavaScript
 - 运行时
@@ -88,7 +88,39 @@
 ## 浏览器实现原理与API
 - 实现原理
   - 解析
+    - 把一个URL变成屏幕上显示的网页过程
+      - DNS解析域名，通过ip主机地址及HTTP或者HTTPS协议访问服务器请求页面
+      - 将请求回来的HTML代码解析成DOM树
+      - 计算DOM树的CSS属性
+      - 根据css属性对元素逐个进行渲染，得到内存中的位图
+      - 一个可选的步骤是对位图进行合并，可以极大提高后续绘制速度
+      - 将合成后的位图绘制到界面上
+    - HTTP1.1协议（rfc规定的协议）
+      - 基于TCP协议
+      - 请求分为： 
+        - 请求行（method,path,version) eg: POST /chapther/user.html HTTP/1.1
+        - 请求头(accept,accept-encoding, accept-language,cache-control, connection,host,**if-modified-since**,**if-none-match**, user-agent, cookie)
+        - 请求体,请求参数
+          - application/json 
+          - application/x-www-form-urlencoded 表单数据默认行为
+          - multipart/form-data 上传文件常用
+          - text/html
+      - 响应与请求类似
+        - 响应头（cache-control,connection, content-encoding, content-length, content-type, date, **etag**, expires, keep-alive, **last-modified**, server, set-cookie, via(服务端请求链路)）
+      - HTTP status code
+        - 1xx 临时回应，表示客户端继续，被浏览器http库直接处理
+        - 2xx 请求成功系列 例如：200
+        - 3xx 请求目标有变化，希望客户端进一步处理 301&302 304(**重点**)
+        - 4xx 客户端请求错误 403无权限 404页面不存在
+        - 5xx 服务端请求错误 500服务端错误 503服务端暂时性错误，可以一会再试
+    - HTTPS协议
+      - 使用加密通道来传输http的内容。首先与服务端建立TLS加密通道。
+      - TLS构建于TCP协议之上
+    - HTTP2.0 （1.1的升级）
+      - 支持服务端推送， 可以在收到第一个请求到服务端时，提前将一部分内容推送给客户端放入缓存
+      - 支持TCP连接复用， 可以把使用同一个tcp来传输多个http请求，避免tcp连接建立时的三次握手开销
   - 构建DOM树
+    - 字符流 -> 状态机 -> 词token -> 栈 -> DOM树
   - 计算CSS
   - 渲染、合并和绘制
 - API
