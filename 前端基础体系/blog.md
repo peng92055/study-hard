@@ -132,13 +132,94 @@
     - 将位图最终绘制到屏幕上的过程就是绘制。脏矩形算法，将屏幕均匀的分成若干矩形区域。
 - API
   - DOM
+    - 节点（Node）
+      - 分类：
+        - Element eg:<tagname></tagname>
+          - HTMLElement
+          - SVGElement
+        - Document
+        - CharacterData字符数据
+          - Text eg:text
+          - Comment eg:<!-- comments -->
+          - ProcessingInstruction
+        - DocumentFragment
+        - DocumentType  eg:<!Doctype html>
+      - 元素对应HTML中的标签，它既有子节点，又有属性
+      - getElementById、getElementsByName、getElementsByTagName、getElementsByClassName，这几个 API 的性能高于 querySelector
+      - getElementsByName、getElementsByTagName、getElementsByClassName 获取的集合并非数组，而是一个能够动态更新的集合
+    - **事件** 触发和监听相关的API
+    - Range（操作文字范围）
+    - 遍历
+      - DOM API提供了NodeIterator和TreeWalker来遍历树，不太建议使用这两个API
   - CSSOM
+    - cssom是css的对象模型。包含描述样式表和规则，和跟元素视图相关的view部分
+    - 滚动API,分为可视区域内的滚动和内部元素的滚动
+      - 视口滚动API
+        - scrollX,scrollY,scroll(x, y), scrollBy(x, y)
+        - 监听滚动 document.addEventListener('scroll', function(event){})
+      - 元素滚动API
+        - scrollTop,scrollLeft,scrollWidth, scrollHeight,scroll(x,y), scrollBy(x,y),scrollIntoView(arg)
+        - element.addEventListener('scroll',function(event){})
+      - 全局尺寸信息
+        - window.innerHeight,window.outerWidth,window.screen.width
+        - window.devicePixelRatio: 表示物理像素和css像素单位的倍率关系。Retina屏这个值是2，还有更高的3倍Android屏
+    - 获取元素宽高，实际是获取元素所产生的盒子的宽高。只有盒有宽高。getClientRects();getBoundingClientRect();
+    - 获取相对坐标小技巧：
+      - var offsetX = document.documentElement.getBoundClientRect().x - element.getBoundClientRext().x
   - 事件
+    - 捕获 (从外到内),在冒泡前发生
+      - 可以理解为是计算机处理事件的逻辑
+    - 冒泡 (从内到外)
+      - 可以理解为是人类处理事件的逻辑
+    - addEventListener三个参数
+      - 事件名称
+      - 事件处理函数，也可以是具有handleEvent方法的对象
+      - 捕获还是冒泡，参数也不一定是boolean值，默认false,冒泡。可以是对象，参数为：
+        - once 只执行一次
+        - passive 承诺此事件监听不会调用preventDefault,这有助于性能
+        - useCapture 是否捕获，false即为冒泡
+      - 一般建议使用冒泡，不传递第三个参数。除非是组件或库的开发使用者，就需要关心冒泡和捕获了。
+      - 自定义事件,但是不能用于普通对象，只能用户dom元素上
+        - var evt = new Event('look',{'bubbles': true, 'cancelable': false }); document.dispatchEvent(evt)
   - API总集合
   
 ## 前端工程实践
 - 性能
-- 工具链
+  - 现状评估和建立指标
+    - 页面加载性能
+    - 动画与操作性能
+    - 内存、电量消耗
+  - 指标：秒开率。即一秒之内打开的用户量的百分比
+  - 了解浏览器工作的几件事情
+    - 从域名到 IP 地址，需要用 DNS 协议查询；
+    - HTTP 协议是用 TCP 传输的，所以会有 TCP 建立连接过程；
+    - 如果使用 HTTPS，还有有 HTTPS 交换证书；
+    - 每个网页还有图片等请求。
+  - 技术方案
+    - 缓存，客户端控制强缓存策略
+    - 降低请求成本
+      - HTTP DNS：有客户端控制
+      - TCP/TLS连接服用，由服务端升级到http2
+    - 减少请求数量
+      - js,css打包到html
+      - 用js控制图片异步加载和懒加载
+      - 小型图片用uri
+    - 减少传输体积
+      - 尽量使用svg等代替图片
+      - 根据网络和机型情况控制图片清晰度
+      - 对低清晰度的图片使用锐化来提升体验
+      - 设计上避免大型背景图
+  - 执行
+    - 纯管理
+    - 制度化
+    - 自动化
+  - 结果评估和监控
+    - 线上监控分为数据采集和数据表现
+- 工具链（不太推荐把开发效率和开发体验过度数据化，开发效率提升 n 倍永远是一种臆想或者主观论断）
+  - 现状与指标
+  - 方案
+  - 实施
+  - 结果和监控
 - 持续集成
 - 搭建系统
 - 构架与基础库
