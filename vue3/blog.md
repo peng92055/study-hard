@@ -15,3 +15,40 @@
 
 ### 平台化 替换compile-dom和runtime-dom即可 底层都是用core
 
+## 初始化流程
+- 初始化vue2和vue3的区别
+  - vue2
+    ```
+      new Vue({
+        date() {
+          return {
+            count: 0
+          }
+        }
+      }).$mount('#app)
+    ``` 
+  - vue3
+    ```
+      const { createApp } = Vue
+      createApp({
+        date() {
+          return {
+            count: 0
+          }
+        },
+      }).mount('#app)
+    ```
+  - 区别1： 由new变成工厂函数来初始化实例对象
+  - 区别2： 挂载对象由$mount变成mount
+
+- 初始化过程
+1. createApp
+2. renderer渲染器创建的 renderer.createApp()
+3. createRenderer来创建渲染器
+4. 初始化时，vnode的类型是组件，初始化时会进行一次patch
+5. mount
+   
+### Vue.use、Vue.componment等变成 由全局静态 -> 改变成实例上的方法
+- 较少全局污染
+- 静态全局无法使用摇树优化代码
+- 链式调用，优化代码使用
