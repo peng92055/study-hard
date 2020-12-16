@@ -1,13 +1,12 @@
 # Stay hungry，Stay foolish
-## 懒人学习笔记
+## 快读入口
 
-
+- [x] [前端基础体系](https://github.com/peng92055/study-hard/blob/master/前端基础体系/blog.md) 
 - [x] [vue3](https://github.com/peng92055/study-hard/blob/master/vue3/blog.md) 
 - [ ] [HTTP协议及缓存机制](https://github.com/peng92055/study-hard/blob/master/专题/HTTP及缓存机制.md) 
 - [ ] requestIdleCallback
 
 ## 看书计划
-
 - [x] 高性能网站建设指南
 - [ ] 高性能JavaScript
 - [ ] 你不知道的JavaScript <上册>
@@ -19,13 +18,6 @@
 - [ ] React进阶指路
 - [ ] 深入React技术栈
 - [ ] React状态管理与同构实战
-
-
-
-## 学习参考博客 
-- https://github.com/Nealyang/PersonalBlog  PersonalBlog Nealyang 全栈前端
-- https://mp.weixin.qq.com/s/7rqBKpm55MP6K3KL7FLBaQ   3 年创业公司成长经历 && 面试总结
-
 
 ## 学习计划
 - 编写vscode插件
@@ -54,4 +46,8 @@
   - 资源预加载（Html5预打包）
   - 热更新集成
   - 阿里云消息推送
+
+## 学习参考博客 
+- https://github.com/Nealyang/PersonalBlog  PersonalBlog Nealyang 全栈前端
+- https://mp.weixin.qq.com/s/7rqBKpm55MP6K3KL7FLBaQ   3 年创业公司成长经历 && 面试总结
 
