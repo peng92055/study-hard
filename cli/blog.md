@@ -1,6 +1,6 @@
 # 学习制作项目CLI轨迹
 
-## 2020-11-19
+## 路线
 - 学习 inquirer ,掌握 用户与命令行 的基础交互方式
   * 重点： prompt函数
   * 参考文章 https://blog.csdn.net/qq_26733915/article/details/80461257

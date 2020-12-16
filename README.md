@@ -2,26 +2,30 @@
 ## 快读入口
 
 - [x] [前端基础体系](https://github.com/peng92055/study-hard/blob/master/前端基础体系/blog.md) 
-- [x] [vue3](https://github.com/peng92055/study-hard/blob/master/vue3/blog.md) 
-- [ ] [HTTP协议及缓存机制](https://github.com/peng92055/study-hard/blob/master/专题/HTTP及缓存机制.md) 
-- [ ] requestIdleCallback
+- [ ] [requestIdleCallback]
+- [ ] [HTTP协议及缓存机制](https://github.com/peng92055/study-hard/blob/master/专题/HTTP及缓存机制.md)
+- [x] [CLI构建](https://github.com/peng92055/study-hard/blob/master/cli/blog.md)
+- [ ] [编写vscode插件](https://github.com/peng92055/study-hard/blob/master/vscode/blog.md)
+- [ ] [vue2源码](https://github.com/peng92055/study-hard/blob/master/vue2/blog.md) 
+- [x] [vue3源码](https://github.com/peng92055/study-hard/blob/master/vue3/blog.md) 
+- [ ] [数据结构与算法](https://github.com/peng92055/study-hard/blob/master/数据结构与算法/blog.md)
 
-## 看书计划
+## 书籍推荐
 - [x] 高性能网站建设指南
-- [ ] 高性能JavaScript
-- [ ] 你不知道的JavaScript <上册>
+- [x] 高性能JavaScript
+- [x] 你不知道的JavaScript <上册>
 - [ ] 你不知道的JavaScript <中册>
 - [ ] 你不知道的JavaScript <下册>
-- [ ] 漫画算法： 小灰的算法之旅
-- [ ] css世界
-- [ ] 深入理解ES6
-- [ ] React进阶指路
-- [ ] 深入React技术栈
-- [ ] React状态管理与同构实战
+- [x] 漫画算法： 小灰的算法之旅
+- [x] css世界
+- [x] 深入理解ES6
+- [x] React进阶指路
+- [x] 深入React技术栈
+- [x] React状态管理与同构实战
 
-## 学习计划
+## 关键思路
+- 编写cli脚手架 使用 Yeoman 开发的脚手架，介绍了一下 Yeoman 的能力，用来初始化vue管理系统项目，包好权限控制，请求拦截器，基础页面等功能
 - 编写vscode插件
-- 编写cli脚手架 使用 Yeoman 开发的脚手架，介绍了一下 Yeoman 的能力，以及为什么要用它而不是直接用现成的 cra 和 vue-cli  制作一个cli，用来初始化vue管理系统项目，包好权限控制，请求拦截器，基础页面等功能  https://www.cnblogs.com/zhangycun/p/10813299.html
 - 学习docker镜像打包部署
 - nodejs 常见场景：工具、BFF 应用
 - 学习react源码
@@ -31,7 +35,6 @@
 - react-native 热更新方案  部署独立热更新服务，并打包docker镜像
 - react-native 崩溃日志方案
 - 执行gitlab提交前校验规范，降低codeview成本    编码规范，以及一套 ESLint/StyleLint/CommitLintd
-- Vue源码剖析之整体流程：http://t.kuick.cn/RIUp
 - 字节、阿里前端高频核心面试题深度剖析 阿里P8面试官 止水 https://www.bilibili.com/video/BV1mK4y1Z7aQ/
 - 字节跳动面试官，我也实现了大文件上传和断点续传 https://juejin.im/post/6844904055819468808
 - 使用XXX框架，并增加loader/plugin/中间件/npm 封装了什么功能
