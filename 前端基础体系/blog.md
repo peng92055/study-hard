@@ -220,6 +220,41 @@
   - 方案
   - 实施
   - 结果和监控
-- 持续集成
+- 持续集成（前端）
+  - 预发布环境
+  - 规则校验 
+    - 页面结构扫描 使用无头浏览器（如phantomjs)
+    - 运行时数据采集 利用Performance API来采集性能数据 利用window.onerror来采集js错误
+    - 代码扫描(jsHint等)
 - 搭建系统
+  - 运营的简单高频的需求 cms
 - 构架与基础库
+  - 组件化。将UI上的各种元素分解成组件，规定组件的标准，实现组件运行的环境就是组件化。
+    - web component (理论上是未来选项，但实际上标准还不够完善)
+    - Vue
+    - React
+    - Angular
+    - 自研
+  - 兼容性和适配性
+  - 单页应用
+  - 扩展前端边界
+  - 前端技术未来方向
+    - 图形学 webgl等
+    - 包管理 npm
+    - AI智能切图 tensorFlow
+    - pwa进一步发展
+
+## 排除元素的Number和parseInt，用JS代码实现String转Number？
+```
+  function strToNum(string) {
+    let chars = string.split("").map(c => c.charCodeAt(0) - "0".charCodeAt(0))
+    let n = 0;
+    for(var char of chars) {
+      n *= 10;
+      n += char
+    }
+    return n;
+  }
+
+  strToNum('1002')
+```
