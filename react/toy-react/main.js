@@ -18,32 +18,20 @@
 //   <div></div>
 // </div>)
 
-class MyComponent {
-  
+
+import { toy_createElement, render, Component } from './toy-react'
+
+class MyComponent extends Component {
+  render() {
+    return <div>
+      <h1>my component</h1>
+      {this.children}
+    </div>
+  }
 }
 
-
-function toy_createElement(type, attributes, ...children) {
-  let el;
-  if(typeof type === 'string') {
-    el = document.createElement(type)
-  } else {
-    el = new type
-  }
-  for(let a in attributes) {
-    el.setAttribute(a, attributes[a])
-  }
-  for(let child of children) {
-    if(typeof child === 'string') {
-      child = document.createTextNode(child)
-    }
-    el.appendChild(child)
-  }
-  return el
-}
-
-document.body.append(<MyComponent id='a' class='b'>
+render(<MyComponent id='a' class='b'>
   <div>aaa</div>
   <div></div>
   <div></div>
-</MyComponent>)
+</MyComponent>, document.body)
