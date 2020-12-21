@@ -4,7 +4,7 @@
 - react-native 热更新方案  部署独立热更新服务，并打包docker镜像
 - 借鉴vue中 虚拟dom的类型PatchFlags的定义 0<<1 优化权限判断
 - 借鉴浏览器缓存机制优化app数据字典获取机制
-- 制作rn插件，js和native交互，反射~
+<!-- - 制作rn插件，js和native交互，反射~ -->
 - 构建基于react-native app壳子的基础建设工作，直接通过webview来访问站点，基础建设工作包含：
   - webview加载失败反馈
   - 网络失败反馈
