@@ -135,7 +135,7 @@ eg:
     } // 示意代码 未AC
    ```
    
-# 树&二叉树&二叉搜索树
+# 树&二叉树&二叉搜索树 主要考察广度遍历、深度遍历及搜索
 * 链表是特殊的树
 * 树是特殊的图形  (图形就是含有环形的链表，常用判断最优路径）
 1. 验证二叉搜索树
@@ -165,3 +165,4 @@ eg:
         return root === null || root.val > min && root.val < max && isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max)
       }
     ```
+2. 二叉树遍历（前序pre-order 根-左-右、中序In-order 左-根-右、后序Post-order 左-右-根）
