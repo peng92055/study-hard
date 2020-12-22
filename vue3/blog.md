@@ -1,10 +1,9 @@
 # vue3 学习笔记
-  vue3分为三大核心
-  
+## vue3分为三大核心
 - reactivity
-  ### 响应式核心 依赖proxy 
+  - 响应式核心 依赖proxy 
 - compile （dom -> core）
-  ### 掌握编译原理真的可以为所欲为
+  - 掌握编译原理真的可以为所欲为
    编译五步骤
    1. baseParse(template) -> ast
    2. transform(ast)
@@ -12,7 +11,6 @@
    4. 使用new Function 把string转换成可执行函数
    5. 执行函数，返回的就是vdom(包含静态标记)
 - runtime (dom -> core)
-
 ### 平台化 替换compile-dom和runtime-dom即可 底层都是用core
 
 ## 初始化流程
@@ -29,17 +27,20 @@
     ``` 
   - vue3
     ```
-      const { createApp } = Vue
+      const { createApp, reactive, computed } = Vue
       createApp({
-        date() {
-          return {
-            count: 0
-          }
-        },
+       setup() {
+         const data = reactive({
+           counter: 1,
+           doubleCounter: computed(() => data.counter * 2)
+         })
+         return {data}
+       }
       }).mount('#app)
     ```
   - 区别1： 由new变成工厂函数来初始化实例对象
   - 区别2： 挂载对象由$mount变成mount
+  - 区别3： 可以将操作同一数据的定义和函数写在一起，减少开发时页面横跳。
 
 - 初始化过程 创建vnode -> 渲染vnode -> 生成dom
 1. 从Vue中引入createApp构造方法
@@ -90,5 +91,46 @@
 - 较少全局污染, 这些方法只在当前实例上调用，不会绑定在全局Vue上。
 - 静态全局无法使用摇树优化代码，
 - 每次调用都会返回当前app实例，可以链式调用，优化代码使用
+- compostionAPI中reactive和computed可以写到一起，减少页面横跳。
+
+## vue3数据响应式
+- Proxy是一种可以拦截并改变底层JS引擎操作的包装器。
+- 代理后对象 反射API以Reflect对象的形式出现。
+- Reflect代理的方法可以基于操作是否成功来返回恰当的值。增加容错性。
+```
+  function defineReactive(obj) {
+    return new Proxy(obj, {
+      get(target, key) {
+        return target[key]
+      },
+      set(target, key, val) {
+        target[key] = val
+        update()
+      }
+    })
+  }
+```
+### vue2响应式和vue3响应式的差别
+- vue2中响应式内部基于了observe,初始化时将obj的keys全部获取，并递归所有的key,递归耗时影响性能（速度慢，内存占用大）。
+- vue3中使用proxy,不需要对每个key进行遍历，并且只在需要用的时候，才访问对象。
+- vue2对于数组需要特殊处理，修改数据是不能使用索引方式。
+- vue2中动态添加或者删除对象属性不能直接监听，需要额外使用API(Vue.set()/delete())，动态添加观察者。
+- vue3中利用proxy就可以解决上诉问题。proxy可以通过deleteProperty来拦截动态删除。利用set可以拦截动态添加
+  
+### vue3依赖收集具体实现
+- 依赖收集 {target<Object>, {key<String>:[cb1, cb2,...]<Set>}<Map>}<WeakMap>
+- 定义targetMap对象，WeapMap格式，用来保存对象和effect函数之间的依赖。由于key为对象，故而用weakmap。
+- targetMap中key为target整个对象
+- tragetMap中value为key与cb函数数组的映射对象。为普通map
+- map中key为响应式的key
+- map中的value为cb集合对象set,方便去重
 
 ## vite
+- Vite 是一个由原生 ESM 驱动的 Web 开发构建工具。在开发环境下基于浏览器原生 ES imports 开发，在生产环境下基于 Rollup 打包。
+- 它主要具有以下特点：
+  - 快速的冷启动
+    - vite 利用浏览器原生支持模块化导入这一特性，省略了对模块的组装，也就不需要生成 bundle，所以 冷启动是非常快的
+  - 即时的模块热更新
+  - 真正的按需编译
+    - 打包工具会将各模块提前打包进 bundle 里，但打包的过程是静态的——不管某个模块的代码是否执行到，这个模块都要打包到 bundle 里，这样的坏处就是随着项目越来越大打包后的 bundle 也越来越大。而 ESM 天生就是按需加载的，只有 import 的时候才会去按需加载
+    - vite 就是在按需加载的基础上通过拦截请求实现了实时按需编译

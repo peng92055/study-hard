@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{data.counter}}</p>
+    <p>{{data.doubleCounter}}</p>
+  </div>
+
+  <script src="../dist/vue.global.js"></script>
+
+  <script>
+    const {createApp, reactive, computed, watchEffect} = Vue;
+    createApp({
+      setup() {
+        const data = reactive({
+          counter: 1,
+          doubleCounter: computed(() => data.counter * 2)
+        })
+        console.log(data)
+        // setInterval(() => {
+        //   data.counter++
+        // }, 1000)
+        watchEffect(() => {
+          console.log(data.counter)
+        })
+        return {data}
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

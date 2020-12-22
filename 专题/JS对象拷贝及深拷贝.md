@@ -5,7 +5,7 @@
 - ...obj
 - 深拷贝
   ```
-    <!-- function clone(obj) {
+    function clone(obj) {
       let _obj = {}
       for(let key in obj) {
 
@@ -16,5 +16,14 @@
         }
       }
       return _obj
-    } -->
+    }
+    let merage = (oldState, newState) => {
+      for(let p in newState) {
+        if(oldState[p] === null || typeof oldState[p] !== 'object') {
+          oldState[p] = newState[p]
+        } else {
+          merage(oldState[p], newState[p])
+        }
+      }
+    }
   ```
