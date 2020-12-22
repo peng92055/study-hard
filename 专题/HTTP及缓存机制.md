@@ -37,7 +37,7 @@
   - 浏览器返回200状态有两种情况
     - from memory cache 从内存中获取，一般缓存更新频率较高的js、图片、字体等资源,当资源从内存中释放，就会从磁盘中获取。
     - from disk cache 从磁盘中过去，一般缓存更新频率较低的js、css等资源
-- 协商缓存（HTTP状态码返回304）
+- 协商缓存(http1.1)（HTTP状态码返回304）
   - Last-modified/If-Modified-Since
   - Etag/If-None-Match （优先级高）
 - 优劣势
@@ -58,11 +58,7 @@
 - 缓存优先级 强缓存>etag>last-modified
 - max-age和expires一般会写两个，为了向下兼容。在1.1环境中，max-age优先级高于expires
 
-
-
-
-- 304返回
-  - from disk
-  - from memory
-- last-modified及If-modified-since 配合
-- etag及If-none-match配合
+## HTTPS加密
+- 证书机构
+- 加密方式
+  - 非对称加密、对称加密
