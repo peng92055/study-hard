@@ -87,15 +87,64 @@
 
 ## ajax原理
 ```
-  function myAjax(url) {
-
+  function myAjax(url, fn) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true)
+    xhr.onreadstatechange = function() {
+      if(xhr.readyState === 4 && xhr.status === 200 || xhr.status == 304) {
+        fn.apply(this, xhr.responseText)
+      }
+    }
+    xhr.send()
   }
 ```
 
 ## 实现一个reduce
 ```
+  let arr = [1,2,3];
+
+  function reduce(arr, fn, init) {
+    let _arr = init ? [].concat(arr, init) : [...arr]
+    let prev = _arr[0];
+    for(let i = 1; i < _arr.length; i++) {
+      curr = _arr[i]
+      prev = fn.apply(this, [prev, curr])
+    }
+    return prev
+  }
+
+  let fn = (x, y) => x + y;
+  let init = 2;
+  arr.reduce(fn, init); // 6
+  reduce(arr, fn, init);
 ```
 
 ## 实现一个String.prototype._trim函数
+```
+  String.prototype._trim = function() {
+    return this.replace(/(^\s*)|(\s*$)/g, '')
+  }
+
+  String.prototype._trim = function() {
+    let strs = this;
+    let startIndex = -1,endIndex = strs.length - 1;
+    for(let i = 0; i < strs.length; i++) {
+      if(strs.charAt(i) !== ' ') {
+        startIndex = i;
+        break
+      }
+    }
+    if(startIndex === -1) {
+      return ''
+    }
+    for(let i = endIndex; i >= 0; i--) {
+      if(strs.charAt[i] !== ' ') {
+        endIndex = i;
+        break;
+      }
+    }
+    return strs.slice(startIndex, endIndex)
+  }
+```
 
 ### 参考[https://juejin.cn/post/6844903891591495693]
