@@ -18,7 +18,7 @@
     cat.showName.call(dog, '1')  // bb 1
     cat.showName.apply(dog, ['2']) // bb 2
   ```
-  - call与apply,接受参数不同。call将多个参数分开接收，apply将参数合并为数组接收。
+  - call与apply,接受参数不同。**call将多个参数分开接收**，apply将参数合并为数组接收。
   - bind方法也可以改变this指针。 与call和apply的区别在于不会立即执行。bind方法会预先将参数传递给方法。bind() 方法创建一个新的函数，在 bind() 被调用时，这个新函数的 this 被指定为 bind() 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
 
 ## call实现

@@ -34,12 +34,11 @@
 ## new原理
 ```
   function myNew(fn) {
-    return function() {
-      let obj = {}
-      obj.__proto__ = fn.prototype
-      fn.call(obj, ...arguments)
-      return obj
-    }
+    let obj = {};
+    let Constructor = [].shift.call(arguments);
+    obj.__proto__ = Constructor.prototype;
+    let res = Constructor.call(obj, ...arguments)
+    return typeof res === 'object' ? res : obj
   }
 
   function Car(name) {
@@ -88,9 +87,15 @@
 
 ## ajax原理
 ```
-  function instanceof(left, right) {
+  function myAjax(url) {
 
   }
 ```
+
+## 实现一个reduce
+```
+```
+
+## 实现一个String.prototype._trim函数
 
 ### 参考[https://juejin.cn/post/6844903891591495693]
