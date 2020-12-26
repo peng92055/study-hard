@@ -122,7 +122,7 @@
 ## 实现一个String.prototype._trim函数
 ```
   String.prototype._trim = function() {
-    return this.replace(/(^\s*)|(\s*$)/g, '')
+    return this.replace(/(^\s*)|(\s*$)/g, "")
   }
 
   String.prototype._trim = function() {
