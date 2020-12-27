@@ -22,7 +22,7 @@
   - 写一个loader
     - 不能用箭头函数，使用this来接受参数 this.query
     - 替换js文件中所有涵盖“中化石化电子商务有限公司”字样替换成“xx”
-    - 创建uat-replace-loader
+    - uat-replace-loader
       ```
         module.exports = function (source) {
           const result = source.replace("中化石化", "xx");
@@ -38,7 +38,7 @@
               loader: 'uat-replace-loader'
             }]
           }]
-    }
+        }
       ``` 
 ## plugin原理
   - plugin可以扩展webpack的功能，在webpack运行的生命周期中会广播出很多事件，plugin可以监听这些事件，从而扩展功能。例如打包优化、压缩，定义环境，处理各种子任务等功能。
@@ -78,7 +78,7 @@
  - loader是一个function 
  - plugin是一个类，类似node中间件,可以贯穿整个生命周期。
 ## tree shaking
-## rollup,webpack,closure，compiler差异
+## rollup,webpack,closure,compiler差异
 ## webpack5
 
 ## webpack优化
