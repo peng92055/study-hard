@@ -21,13 +21,13 @@
 - [x] 高性能网站建设指南
 - [x] 高性能JavaScript
 - [x] JavaScript高级程序设计第四版
-- [] JavaScript忍者秘籍第二版
+- [ ] JavaScript忍者秘籍第二版
 - [x] 你不知道的JavaScript <上册>
 - [x] 你不知道的JavaScript <中册>
 - [ ] 你不知道的JavaScript <下册>
 - [x] 漫画算法： 小灰的算法之旅
-- [] 算法第4版
-- [] 设计模式
+- [ ] 算法第4版
+- [ ] 设计模式
 - [x] css世界
 - [x] 深入理解ES6
 - [x] React进阶指路

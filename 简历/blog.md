@@ -16,6 +16,7 @@
   - 热更新集成
   - 阿里云消息推送
 - fontspider plugin
+- 编写webpack uat-keys-replace-loader 过滤uat环境的企业名称等关键信息
 
 ## 学习参考博客 
 - https://github.com/Nealyang/PersonalBlog  PersonalBlog Nealyang 全栈前端
