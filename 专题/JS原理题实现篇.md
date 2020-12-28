@@ -147,4 +147,40 @@
   }
 ```
 
+## 实现数组扁平化及排序
+```
+  let arr = [21,12,[42,30,[93,4]],[12,53]];
+  function flat(arr) {
+    return arr.toString().split(",").map(num => Number(num)).sort((a,b) => a - b)
+  }
+  flat(arr)
+  //去重+扁平化+排序
+  let arr = [21,12,[42,30,[93,4]],[12,53]];
+  function flat2(arr) {
+    return [...new Set(arr.toString().split(",").map(num => Number(num)).sort((a,b) => a - b))]
+  }
+  flat2(arr)
+  // reduce方式
+  function flat3(arr) {
+    return arr.reduce((acc, cur) => {
+      if(Array.isArray(cur)) {
+        cur = flat(cur)
+      }
+      return acc.concat(cur)
+    }, [])
+  }
+```
+
+## 模拟实现 Array.prototype.splice
+```
+  // 参考[https://github.com/sisterAn/JavaScript-Algorithms/issues/138]
+```
+
+## 常用正则
+  - trim: /(^\s*)|(\s*$)/g
+  - 数字  /^[0-9]*$/
+  - n位数字  /^\d{n}$/
+  - 手机号 /^1[3-9]\d{9}$/
+  - 邮箱  /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
+
 ### 参考[https://juejin.cn/post/6844903891591495693]
