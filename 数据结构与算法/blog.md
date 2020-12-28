@@ -105,4 +105,7 @@
         return root === null || root.val > min && root.val < max && isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max)
       }
     ```
-2. 二叉树遍历（前序pre-order 根-左-右、中序In-order 左-根-右、后序Post-order 左-右-根）
+2. 二叉树遍历
+  - 前序pre-order 根-左-右、
+  - 中序In-order 左-根-右、
+  - 后序Post-order 左-右-根
