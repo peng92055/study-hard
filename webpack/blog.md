@@ -74,12 +74,45 @@
           }
         ```
     - 编写plugin时，可以访问compiler和compilation,通过钩子webpack执行。
+  
 ## loader和plugin的区别,常用的loader和plugin
  - loader是一个function 
  - plugin是一个类，类似node中间件,可以贯穿整个生命周期。
+  
 ## tree shaking
-## rollup,webpack,closure,compiler差异
+  - 最早是由rollup作者提出，本质是用于消除无用代码，webpack2增加了该功能。
+  - DCE(Dead code elimination) 去除无用代码，tree shaking是DCE的一种实现方式。传统DCE是消除不可用代码，tree shaking是消除没有用到的代码》
+  - 减少文件加载体积对js意义重大
+  - DCE特征
+    - 代码不会被执行，不可到达
+    - 代码执行的结果不用被用到
+    - 代码只会影响死变量（只写不读）
+  - 传统编译器将dead code从ast中删除是通过uglify做到的。
+  - Tree Shaking
+    - 依赖于ES6的模块性，es6 module特点：
+      - 只能作为模块顶层的语句出现
+      - import的模块名只能是字符串常量
+      - import binding是immutable(不可变)的
+    - tree shaking的基础：依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，然后消除
+    - 在rollup和webpack2，要用es module synatax才能tree-shaking
+    - webpack tree shaking实现：
+      - 把所有的import标记为有使用/无使用两种，在后续压缩式进行处理
+        - 统一标记import为/* harmony import*/
+        - 被使用过export标记为/* harmony export([type])*/
+        - 没被使用过的import被标记/* unused harmony export [FuncName]*/  FuncName为export的方法名称
+      - 通过uglifyjs（类似其他）工具进行代码精简
+  
+## rollup,webpack,closure compiler差异
+  - 三大工具的tree-shaking对无用代码消除是有限的，closuer complier是最好的。
+
 ## webpack5
+- 通过持久化缓存提高性能
+- 采用更好的持久化缓存算法和默认行为
+- 通过优化tree shaking和代码生成来减少bundle体积
+- 提高web平台的兼容性
+- 清除之前为了webpack4没有不兼容变更导致的不合理的state
+- 尝试现在引入重大个更改来为将来的功能做准备，以使我们能够尽可能长时间的使用webpack5
+- webpack也可以生成es6的代码
 
 ## webpack优化
 - 优化图片，使用url-loader优化，将小图片转成base64
