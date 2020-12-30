@@ -1,105 +1,96 @@
+console.log('begin promise coding...');
+console.log('*************************************')
+
 const PENDING = 'pending';
 const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
-function myPromise(callback) {
-  var self = this;
-  //定义初始值 （void 0 返回undefined,防止undefined在老浏览器中被篡改）
-  self.value = void 0;
-  //定义当前状态机
-  self.status = PENDING;
-  //定义成功状态时的回调函数集合
-  self.onResolvedCallbacks = [];
-  //定义失败状态时的回调函数集合
-  self.onRejectedCallbacks = [];
+class MyPromise {
 
-  //定义resolve方法和reject方法
-  self.resolve = function(value) {
-    if(value instanceof myPromise) {
-      return value.then(self.resolve, self,reject)
-    }
-    //将回调任务放在JS引擎的任务队列中
-    setTimeout(() => {
-      // 可能有多个回调函数
-      if(self.status === PENDING) {
-        self.status = FULFILLED;
-        self.value = value;
-        self.onResolvedCallbacks.forEach(cb => cb(value))
+  constructor(excutor) {
+    this.status = PENDING;
+    this.value = void 0;
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
+
+    const resolve = (value) => {
+      if (value instanceof MyPromise) {
+        return value.then(resolve, reject)
       }
-    })
-  }
-
-  self.reject = function(error) {
-    setTimeout(() => {
-      if(self.status === PENDING) {
-        self.status = REJECTED;
-        self.value = error;
-        self.onRejectedCallbacks.forEach(cb => cb(error))
-      }
-    })
-  }
-
-  //执行callback函数，并传递resolve和reject方法
-  try {
-    callback(self.resolve, self.reject)
-  } catch(e) {
-    self.reject(e)
-  }
-}
-
-myPromise.prototype.then = function(onFulfilled, onRejected) {
-  // this.onResolvedCallbacks.push(onFulfilled);
-  // this.onRejectedCallbacks.push(onRejected);
-  
-  let self = this;
-  // 规范2.2.1 onFulfilled和onRejected 都是可选参数，并且如果不是函数需要忽略，且值穿透
-  onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
-  onRejected = typeof onRejected === 'function' ? onRejected : error => { throw error };
-
-  return new myPromise((resolve, reject) => {
-    function handle(callback) {
-      try {
-        const result = callback(self.value)
-        if(result instanceof myPromise) {
-          result.then(resolve, reject)
-        } else {
-          resolve(result)
+      setTimeout(() => {
+        if (this.status === PENDING) {
+          this.status = FULFILLED;
+          this.value = value;
+          this.onFulfilledCallbacks.forEach(cb => cb(value))
         }
-      } catch (error) {
-        reject(error)
+      })
+    }
+
+    const reject = (error) => {
+      setTimeout(() => {
+        if (this.status === PENDING) {
+          this.status = REJECTED;
+          this.value = error;
+          this.onRejectedCallbacks.forEach(cb => cb(error))
+        }
+      })
+    }
+
+    try {
+      excutor(resolve, reject)
+    } catch (error) {
+      reject(error)
+    }
+  }
+
+  catch (onRejected) {
+    return this.then(null, onRejected)
+  }
+
+  then(onFulfilled, onRejected) {
+    let self = this;
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+    onRejected = typeof onRejected === 'function' ? onRejected : error => { throw error };
+    return new MyPromise((resolve, reject) => {
+      function handle(callback) {
+        try {
+          const result = callback(self.value);
+          if (result instanceof MyPromise) {
+            result.then(resolve, reject)
+          } else {
+            resolve(result)
+          }
+        } catch (error) {
+          reject(error)
+        }
       }
-    }
+      if (self.status === PENDING) {
+        this.onFulfilledCallbacks.push(() => handle(onFulfilled));
+        this.onRejectedCallbacks.push(() => handle(onRejected));
+      } else if (self.status === FULFILLED) {
+        setTimeout(() => {
+          handle(onFulfilled)
+        })
+      } else {
+        setTimeout(() => {
+          handle(onRejected)
+        })
+      }
+    })
+  }
 
-    if(self.status === PENDING) {
-      self.onResolvedCallbacks.push(() => handle(onFulfilled));
-      self.onRejectedCallbacks.push(() => handle(onRejected));
-    } else if(self.status === FULFILLED) {
-      setTimeout(() => {
-        handle(onFulfilled)
-      })
-    } else {
-      setTimeout(() => {
-        handle(onRejected)
-      })
-    }
-  })
-};
-
-myPromise.prototype.catch = function(onRejected) {
-  return this.then(null, onRejected)
+  finally(onFinally) {
+    return this.then(value => {
+      return MyPromise.resolve(onFinally()).then(() => value)
+    }).catch(error => {
+      return MyPromise.resolve(onFinally()).then(() => { throw error })
+    })
+  }
 }
 
-myPromise.prototype.finally = function(callback) {
-  return this.then(function(value) {
-    return myPromise.resolve(callback()).then(() => value)
-  }, function(err) {
-    return myPromise.resolve(callback()).then(() => { throw err })
-  })
-}
-
-myPromise.resolve = function(value) {
-  return new myPromise((resolve, reject) => {
-    if(value instanceof myPromise) {
+MyPromise.resolve = function(value) {
+  return new MyPromise((resolve, reject) => {
+    if (value instanceof MyPromise) {
       value.then(resolve, reject)
     } else {
       resolve(value)
@@ -107,30 +98,30 @@ myPromise.resolve = function(value) {
   })
 }
 
-myPromise.reject = function(error) {
-  return new myPromise((resolve, reject) => {
+MyPromise.reject = function(error) {
+  return new MyPromise((resolve, reject) => {
     reject(error)
   })
 }
 
-myPromise.race = function(promises) {
-  return new myPromise((resolve, reject) => {
+MyPromise.race = function(promises) {
+  return new MyPromise((resolve, reject) => {
     promises.forEach(promise => {
-      myPromise.resolve(promise).then(resolve, reject)
+      MyPromise.resolve(promise).then(resolve, reject)
     })
   })
 }
 
-myPromise.all = function(promises) {
-  //成功的数据集合
-  const resolveValues = new Array(promises.length);
+MyPromise.all = function(promises) {
   let resolveCount = 0;
-  return new myPromise((resolve, reject) => {
+  const length = promises.length;
+  const resolveValues = new Array(length);
+  return new MyPromise((resolve, reject) => {
     promises.forEach((promise, index) => {
-      myPromise.resolve(promise).then(value => {
+      MyPromise.resolve(promise).then(value => {
         resolveValues[index] = value;
         resolveCount++;
-        if(resolveCount === resolveValues.length) {
+        if (resolveCount >= length) {
           resolve(resolveValues)
         }
       }).catch(err => {
@@ -140,77 +131,53 @@ myPromise.all = function(promises) {
   })
 }
 
-// let promise = new myPromise((resolve, reject) => {
-//   console.log('hhh111')
+// const promise = new MyPromise((resolve, reject) => {
+//   console.log('promise test start...')
 //   setTimeout(() => {
-//     resolve('first resolve')
+//     console.log('promise begin resolve')
+//     resolve('success')
 //   }, 1000)
 // })
-// promise.then(res => {
-//   console.log('myPromise1:', res);
-//   return new myPromise(resolve => {
-//     resolve('second resolve')
-//   })
-// }).then(res => {
-//   console.log('myPromise2: ', res);
-//   return new myPromise((resolve, reject) => {
-//     reject('first reject')
-//   })
+
+// promise.then(value => {
+//   console.log('promise init: **', value, '**in then')
+//   return MyPromise.resolve('resolve 2')
+// }).then(value => {
+//   console.log('promise second: **', value, '** in then')
+//   return MyPromise.reject('reject 1')
 // }).catch(err => {
-//   console.log('myPromise catch: ', err)
+//   console.log('promise init: **', err, '**in error')
 // })
 
-let promise1 = new myPromise(resolve => {
-  console.log('hhh222')
+const promise1 = new MyPromise((resolve, reject) => {
+  console.log('promise1 race or all test start...')
   setTimeout(() => {
-    console.log('race: mypromise1 success');
-    resolve('race:mypromise1')
+    console.log('promise2 race or all begin resolve')
+    resolve('promsie1 success')
   }, 1000)
 })
-
-let promise2 = new myPromise((resolve, reject) => {
-  console.log('hhh333')
+const promise2 = new MyPromise((resolve, reject) => {
+  console.log('promise2 race or all test start...')
   setTimeout(() => {
-    console.log('race: mypromise2 success');
-    reject('race:mypromise2')
-  }, 2000)
+    console.log('promise2 race or all begin resolve')
+    resolve('promise2 success')
+  }, 600)
 })
 
-// myPromise.race([promise1, promise2]).then(res => {
-//   console.log('mypromise race result: ', res)
-// }).catch(err => {
-//   console.warn('mypromise race error: ' + err)
-// })
-
-myPromise.all([promise1, promise2]).then(res => {
-  console.log('mypromise all result: ', res)
-}).catch(err => {
-  console.warn('mypromise all error: ' + err)
-})
-
-// Promise
-// let promise3 = new Promise(resolve => {
-//   setTimeout(() => {
-//     console.log('promise3 success');
-//     resolve('promise3')
-//   }, 1000)
-// })
-
-// let promise4 = new Promise((resolve, reject) => {
-//   setTimeout(() => {
-//     console.log('promise4 success');
-//     resolve('promise4')
-//   }, 2000)
-// })
-
-// Promise.race([promise3, promise4]).then(res => {
+// MyPromise.race([promise1, promise2]).then(res => {
 //   console.log('promise race result: ', res)
 // }).catch(err => {
-//   console.log('promise race error: ', err)
+//   console.log('promise race catch: ', err)
 // })
 
-// Promise.all([promise3, promise4]).then(res => {
-//   console.log('promise all result: ', res)
-// }).catch(err => {
-//   console.log('promise all error: ', err)
-// })
+MyPromise.all([promise1, promise2]).then(res => {
+  console.log('promise all result: ', res)
+}).catch(err => {
+  console.log('promise all catch: ', err)
+}).finally(() => {
+  console.log('promise finally!')
+})
+
+
+console.log('end promise coding...');
+console.log('*************************************')
