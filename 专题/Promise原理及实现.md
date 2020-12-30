@@ -16,7 +16,6 @@
 ```
 ## 手写promise
 ```
-  // 简单版本，不支持then链式调用
   const PENDING = 'pending';
   const FULFILLED = 'fulfilled';
   const REJECTED = 'rejected';
@@ -34,6 +33,9 @@
 
     //定义resolve方法和reject方法
     self.resolve = function(value) {
+      if(value instanceof myPromise) {
+        return value.then(self.resolve, self,reject)
+      }
       //将回调任务放在JS引擎的任务队列中
       setTimeout(() => {
         // 可能有多个回调函数
@@ -56,26 +58,113 @@
     }
 
     //执行callback函数，并传递resolve和reject方法
-    callback(self.resolve, self.reject)
+    try {
+      callback(self.resolve, self.reject)
+    } catch(e) {
+      self.reject(e)
+    }
   }
 
   myPromise.prototype.then = function(onFulfilled, onRejected) {
-    this.onResolvedCallbacks.push(onFulfilled);
-    this.onRejectedCallbacks.push(onRejected);
+    // this.onResolvedCallbacks.push(onFulfilled);
+    // this.onRejectedCallbacks.push(onRejected);
+    
+    let self = this;
+    // 规范2.2.1 onFulfilled和onRejected 都是可选参数，并且如果不是函数需要忽略，且值穿透
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+    onRejected = typeof onRejected === 'function' ? onRejected : error => { throw error };
+
+    return new myPromise((resolve, reject) => {
+      function handle(callback) {
+        try {
+          const result = callback(self.value)
+          if(result instanceof myPromise) {
+            result.then(resolve, reject)
+          } else {
+            resolve(result)
+          }
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      if(self.status === PENDING) {
+        self.onResolvedCallbacks.push(() => handle(onFulfilled));
+        self.onRejectedCallbacks.push(() => handle(onRejected));
+      } else if(self.status === FULFILLED) {
+        setTimeout(() => {
+          handle(onFulfilled)
+        })
+      } else {
+        setTimeout(() => {
+          handle(onRejected)
+        })
+      }
+    })
   };
 
-  let promise = new myPromise((resolve, reject) => {
-    resolve('success');
-  });
-  promise.then(value => {
-    console.log('promise resolve: ', value)
-  }, error => {
-    console.log('promise reject: ', error)
-  })
+  myPromise.prototype.catch = function(onRejected) {
+    return this.then(null, onRejected)
+  }
+
+  myPromise.prototype.finally = function(callback) {
+    return this.then(function(value) {
+      return myPromise.resolve(callback()).then(() => value)
+    }, function(err) {
+      return myPromise.resolve(callback()).then(() => { throw err })
+    })
+  }
+
+  myPromise.resolve = function(value) {
+    return new myPromise((resolve, reject) => {
+      if(value instanceof myPromise) {
+        value.then(resolve, reject)
+      } else {
+        resolve(value)
+      }
+    })
+  }
+
+  myPromise.reject = function(error) {
+    return new myPromise((resolve, reject) => {
+      reject(error)
+    })
+  }
 ```
-## 手写promise.all
 ## 手写promise.race
+  ```
+    myPromise.race = function(promises) {
+      return new myPromise((resolve, reject) => {
+        promises.forEach(promise => {
+          myPromise.resolve(promise).then(resolve, reject)
+        })
+      })
+    }
+  ```
+
+## 手写promise.all
+  ```
+    myPromise.all = function(promises) {
+      //成功的数据集合
+      const resolveValues = new Array(promises.length);
+      let resolveCount = 0;
+      return new myPromise((resolve, reject) => {
+        promises.forEach((promise, index) => {
+          myPromise.resolve(promise).then(value => {
+            resolveValues[index] = value;
+            resolveCount++;
+            if(resolveCount === resolveValues.length) {
+              resolve(resolveValues)
+            }
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      })
+    }
+  ```
 
 ### 参考链接
 - [https://www.ituring.com.cn/article/66566]
 - [https://github.com/sisterAn/blog/issues/13]
+- [https://blog.csdn.net/cc_together/article/details/105454045] 最优
