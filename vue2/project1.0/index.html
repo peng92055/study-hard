@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="./k-vue.js"></script>
+  <script src="./compiler.js"></script>
+
+  <div id="app">
+    counter:
+    <p>{{counter}}</p>
+    counter2:
+    <p>{{counter2}}</p>
+    desc counter:
+    <p>{{desc.counter}}</p>
+    counter copy:
+    <p>{{counter}}</p>
+  </div>
+
+  <script>
+    const app = new KVue({
+      el: '#app',
+      data: {
+        counter: 1,
+        counter2: 10000,
+        desc: {
+          counter: 10000
+        }
+      }
+    })
+
+    setInterval(() => {
+      app.counter++;
+      app.counter2++;
+      app.desc.counter--;
+    }, 10000)
+  </script>
+</body>
+
+</html>
