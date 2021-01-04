@@ -113,8 +113,8 @@
   //组合继承中为： < Bmw.prototype = new Car()>
   // 在此处为了减少构造函数再次执行，直接将Bmw的原型访问Car的原型即可
   let prototype = create(Car.prototype)
-  Bmw.prototype = prototype
   prototype.constructor = Bmw
+  Bmw.prototype = prototype
 
   var car1 = new Bmw('red')
   car1.run()

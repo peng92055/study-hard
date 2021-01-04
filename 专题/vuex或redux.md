@@ -1,3 +1,6 @@
+# Vuex / Redux
+  - 发布订阅模式 在dispatch中调用reduce方法
+
 ## 手写redux的及compose函数
 ```
   function compose(...funcs) {
