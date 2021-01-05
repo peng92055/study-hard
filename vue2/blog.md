@@ -1,4 +1,6 @@
 # Vue2.x 源码学习日志
+  - 数据响应式采用：观察者模式+数据劫持
+  - 事件机制采用eventbus： 发布订阅模式
 
 ## 初始化过程分析
   - Vue库的引入
@@ -26,53 +28,107 @@
       - 执行 initMixin(Vue) -> 配置Vue.mixin方法
       - 执行 initExtend(Vue) -> 配置Vue.extend方法
       - 执行 initAssetRegisters(Vue) -> 注册 Vue.component & Vue.directive & Vue.filter方法
-    - 通过defineProperty劫持Vue.prototype上的一些属性
+    - 通过defineProperty定义Vue.prototype上的一些属性
     - 定义Vue.version
   - 在 platforms/web/runtime/index.js 中引入Vue,并导出
     - 增强Vue.config的一些配置
     - 配置Vue.prototype.__patch__方法 *补丁函数，用以patching算法进行更新*
-    - 定义$mount方法，接收参数(el) *挂载函数，将vue实例到指定宿主元素（获得dom并替换宿主元素）* （return mountComponent(this, query(el))）
+    - 定义$mount方法，接收参数(el) **挂载函数，将vue实例到指定宿主元素（获得dom并替换宿主元素）** （return mountComponent(this, query(el))）
   
 ### 加载vue项目代码
   1. new Vue(data{}).$mount('#app')
   2. init(options) ---> 执行Vue的构造函数，调用init方法，并返回Vue的实例
-     - 将新实例化的对象this赋值给vm vm = this; 此时，vm.__proto__ === Vue.prototype
-     - vm.uid = uid++; 给vue实例增加唯一id
-     - initLifecycle(vm) -> 初始化实例上的一些属性，例如$parent, $root, $children, $refs
-     - initEvents(vm) -> 初始化事件，如果_parentListeners有事件，则处理父组件传递的事件和回调
-     - initRender(vm) -> 初始化渲染，设置vm.vnode = null;配置$slots, $scopeSlots, $createElement函数; 通过defineReactive对实例上的 $attrs, $listeners属性进行劫持。
-     - callHook(vm, 'beforeCreate') -> 执行生命周期钩子函数
-     - initInjections(vm) // 获取注入的数据，resolve injections before data/props
-     - initState(vm) *初始化属性、方法、数据、计算属性、watch等*
-       - initProp(vm) -> 初始化props对象，并通过defineReactive进行劫持
-       - initMethods(vm) -> 初始化methods上的方法，并将方法绑定到vm实例上
-       - *initData(vm)* -> 初始化data数据, 执行数据响应化
-         - 从options中获取data
-         - 判断data是否为函数，如果是函数，则执行并返回data实例
-         - 将data赋值到vm._data上
-         - 获取data上的Object.keys(),循环处理每个key,对每个key进行别名代理（proxy）(映射到_data上)
-     - initProvide(vm) // resolve provide after data/props
-     - callHook(vm, 'created') 
-  3. $mount() ---> 执行$mount方法，内部执行mountComponent(vm, query(el)),将vue实例和根元素传递到挂载方法中。
+    - 将新实例化的对象this赋值给vm vm = this; 此时，vm.__proto__ === Vue.prototype
+    - vm.uid = uid++; 给vue实例增加唯一id
+    - initLifecycle(vm) -> 初始化实例上的一些属性，例如$parent, $root, $children, $refs
+    - initEvents(vm) -> 初始化事件，如果_parentListeners有事件，则处理父组件传递的事件和回调
+    - initRender(vm) -> 初始化渲染，设置vm.vnode = null;配置$slots, $scopeSlots, $createElement函数; 通过defineReactive对实例上的 $attrs, $listeners属性进行劫持。
+    - callHook(vm, 'beforeCreate') -> 执行生命周期钩子函数
+    - initInjections(vm) // 获取注入的数据，resolve injections before data/props
+    - initState(vm) *初始化属性、方法、数据、计算属性、watch等*
+      - initProp(vm) -> 初始化props对象，并通过defineReactive进行劫持
+      - initMethods(vm) -> 初始化methods上的方法，并将方法绑定到vm实例上
+      - **initData(vm)** -> 初始化data数据, 执行数据响应化
+        - 从options中获取data
+        - 判断data是否为函数，如果是函数，则执行并返回data实例
+        - 将data赋值到vm._data上
+        - 获取data上的Object.keys(),循环处理每个key,对每个key进行别名代理（proxy）(映射到_data上)
+        - **observe(data, asRootData:true)** 将data执行数据响应化
+          - 此阶段还未进行界面数据的依赖收集，只是准备工作，并如果有用户watcher，则会触发一次get，收集一次依赖
+          - 递归执行data,通过defineReactive对每个对象的key进行数据响应式
+          - 为每一个对象创建一个Observer实例，并将通过__ob__在data中指向ob实例
+            - observer实例中包含一个Dep实例
+          - 为每一个key绑定一个dep实例，存放在闭包中，并对每个key都通过defineProperty进行数据劫持。
+          - Dep（发布者）实例用来保存依赖（watcher实例），一旦有更新，就通知所有的watcher
+          - Watcher（观察者）用来观察数据变化，执行更新。内部保存了所有的deps。
+      - initComputed(vm) -> 初始化计算属性，将计算属性也绑定到vm上，computed计算属性也会创建一个watcher实例
+      - initWatch(vm) -> 初始化用户的watch，执行vm.$watch()方法,实例化一个watch对象，如果不是懒执行，则执行一次watch中的方法获取当前值。
+        - 执行 this.get() -> this.getter.call() -> this.expOrFn.call() -> pushTarget() -> **Dep.target = this** -> popTarget()
+    - initProvide(vm) // 初始化提供方法，先注入，后提供。resolve provide after data/props
+    - callHook(vm, 'created') -> 执行生命周期的create方法  callHook会判断是否有生命周期监听事件，如果有，则emit
+  3. $mount(el) ---> 执行$mount方法，内部执行mountComponent(vm, query(el)),将vue实例和根元素传递到挂载方法中。
+    - 如果options中挂载了el，则在上一步初始化自动执行vm.$mount(vm.$options.el)。如果没有，则等待主动调用
+    - 处理el,query(el)得到真实的dom节点
+    - 判断是options中否有template，如果有，则compile成渲染函数，如果没有，则将el外部的html编译 最终得到渲染函数render
+      - 编译三部曲： parse -> optimize -> generate
+    - 执行 instance/lifeclycle.js 中的mountComponent()方法进行挂载
+    - callHook(vm, 'beforeMount') -> 执行挂载前的生命周期的方法
+    - 定义updateComponent = () => { vm._update(vm._render())}
+      - vm._render() -> 生成vdom并返回
+      - vm._update() -> 执行patch,diff,更新到真实的dom
+    - new Watcher(vm, updateComponent) 给整个组件实例绑定一个watcher对象,传递更新函数到watcher。 
+      - 主动执行this.get() -> pushTarget(this)
+      - Dep.target = watcher实例, 将当前的watcher实例绑定到全局目标对象上
+      - 执行更新函数，此时也就是vm._update(vm._render())
+        - vm._render() （完成依赖收集）
+          - 触发template中被引用的对象上的get，开始进行依赖收集。
+          - dep.depend(),如果有子对象，将当前watcher实例与子对象的dep进行相互依赖
+            - Dep.target.addDep(this) -> watcher.addDep(dep) 将dep添加到watcher中
+              - dep.addSub(watcher) 将watcher添加到dep中
+        - vm._update(vnode)
+          - vm.__patch__(vm.$el | prevVnode, vnode)
+            - patch函数是由createPatchFunction工厂函数返回的
+          - 初始化时，旧的虚拟dom不存在，传递真实的dom节点。
+          - createEle() -> 创建真实的dom节点
+          - removeVnodes() -> 删除旧的dom节点
+    - callHook(vm, 'mounted')
+    - 结束挂载及初始化
 
+### 更新
+  - 触发劫持对象的set方法，调用dep.notify()
+  - 获取dep中的所有观察者watcher,循环调用watcher.update()
+  - watcher中，update通过异步更新机制来更新 queneWatcher(this) 将更新任务放进异步更新队列
+    - quene.push(watcher) -> nextTick(flushSchedulerQueue) -> timerFunc() -> 获取当前环境的异步更新支持情况执行，优先Promise
+  - callHook(vm, 'beforeUpdate')
+  - 通过事件循环机制，在下一个执行周期中执行flushSchedulerQueue()
+  - 异步获取更新任务watcher,watcher在队列中是不可重复的。所以如果在上一个周期中多次同步更新变量，在这里通过watcher会拿到最终值。
+  - watcher.run() -> 执行watcher的run方法。
+  - watcher.get() -> this.getter.call() -> updateComponent() -> _render() -> _update() -> patch() -> patchVnode() -> updateChildren()
+  - 此时已经更新完真实dom
+  - watcher.cb(this.vm, value, oldValue)
+  - callUpdatedHooks()
+  - callHook(vm, 'updated')
+
+### 数据双向绑定流程
+  - new Vue() -> 
+  - this._init() -> 
+  - initState(vm) -> 
+  - observe(vm._data = {}, true) -> 
+  - new Observer(value) -> 
+  - this.observeArray(value),this.walk(value) ->
+  - defineReactive() -> 
+  - Object.defineProperty
+
+### 依赖收集流程
+  - observe -> 
+  - walk -> 
+  - defineReactive -> 
+  - get -> 
+  - dep.depend() -> 
+  - watcher.addDep(new Dep()) -> 
+  - watcher.newDeps.push(dep) -> 
+  - dep.addSub(new Watcher()) -> 
+  - dep.subs.push(watcher)
 
 ## vue2
 - Vue源码剖析之整体流程：http://t.kuick.cn/RIUp
-- 数据响应式采用：观察者模式+数据劫持
-
-## 数据响应式
-```
-  // 劫持数据
-  function defineReactive(obj, key, val) {
-    return Object.defineProperty(obj, key, {
-      get() {
-        return val
-      },
-      set(newVal) {
-        val = newVal;
-        update()
-      }
-    })
-  }
-```
-## 依赖收集
