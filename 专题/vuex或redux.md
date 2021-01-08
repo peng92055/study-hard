@@ -14,3 +14,10 @@
     return funcs.reduce((a, b) => (...args) => a(b(...args)))
   }
 ```
+
+
+
+## vuex与redux的区别
+  - 更新页面的机制不同
+    - vue里，vuex中store的数据也是响应式的，通过vue的响应式机制来更新页面
+    - redux里，通过发布订阅模式，在数据更新后，循环执行回调函数
