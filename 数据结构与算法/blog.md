@@ -7,3 +7,7 @@
 - [x] [树](https://github.com/peng92055/study-hard/blob/master/数据结构与算法/树.md)
 - [x] [排序](https://github.com/peng92055/study-hard/blob/master/数据结构与算法/排序.md)
 - [x] [递归和分治](https://github.com/peng92055/study-hard/blob/master/数据结构与算法/递归和分治.md)
+
+## letcode 22 生成有效括号组合
+- 动态规划
+- 剪枝

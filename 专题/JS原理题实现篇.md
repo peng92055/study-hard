@@ -176,6 +176,33 @@
   // 参考[https://github.com/sisterAn/JavaScript-Algorithms/issues/138]
 ```
 
+### 实现parsetInt
+```
+  var nums = '12012323';
+  function myParseInt(string) {
+    if(typeof string === 'number') {
+      return a
+    } else if(typeof string === 'string') {
+      string = string.trim();
+      let length = string.length;
+      if(length === 0) return NaN
+      let arr = string.split('').map(code => {
+        return code.charCodeAt() - '0'.charCodeAt()
+      })
+      let nums = 0;
+      for(let n of arr) {
+        nums *= 10;
+        nums += n;
+      }
+      return nums;
+    } else {
+      return NaN
+    }
+  }
+  console.log(parseInt(nums))
+  console.log(myParseInt(nums))
+```
+
 ## 常用正则
   - trim: /(^\s*)|(\s*$)/g
   - 数字  /^[0-9]*$/
