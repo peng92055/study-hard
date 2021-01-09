@@ -54,9 +54,9 @@
   - 浏览器返回200状态有两种情况
     - from memory cache 从内存中获取，一般缓存更新频率较高的js、图片、字体等资源,当资源从内存中释放，就会从磁盘中获取。
     - from disk cache 从磁盘中过去，一般缓存更新频率较低的js、css等资源
-- 协商缓存(http1.1)（HTTP状态码返回304）
-  - Last-modified/If-Modified-Since
-  - Etag/If-None-Match （优先级高）
+- 协商缓存HTTP状态码返回304）
+  - Last-modified/If-Modified-Since (http1.0)（
+  - Etag/If-None-Match (http1.1)（（优先级高）
 - 优劣势
   - expires 
     - 时间有服务器发送，如果服务器和客户端时间存在不一致，可能出现问题。
