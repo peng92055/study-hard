@@ -17,7 +17,7 @@
     let a = {a: 1,b: 2}
     let b = Object.assign({}, a)
   ```
-- Object.create(Object.getPrototypeOf(obj),Object.getOwnPropertyDescriptors(obj))
+- Object.create(Object.getPrototypeOf(obj),Object.getOwnPropertyDescriptors(obj),Object.getOwnPropertySmbols())
 
 ## 深拷贝
 - JSON.parse(JSON.stringify(obj)) 不可以拷贝undefined，function，RegExp,Date等类型

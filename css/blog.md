@@ -20,3 +20,18 @@
   6. 盒模型
     - 标准盒模型： width=content  box-sizing: content-box
     - IE盒模型： width=content+padding+border  box-sizing: border-box
+  7. 文本单行和多行溢出省略
+    - 单行
+      ```
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      ```   
+    - 多行
+      ```
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical
+      ``` 
