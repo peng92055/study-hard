@@ -4,6 +4,7 @@
   - Promise本质只一个状态机,每个promise有三种状态：pending、fulfilled和rejected。状态改变只能从pending -> fulfilled 或者pending -> rejected。不可逆。fulfilled多以resolve来指代。
   - then方法必须返回一个新的Promise。可以多次调用。
   - 值可以穿透。
+  - Async/Await就是一个自执行的generate函数。利用generate函数的特性把异步的代码写成“同步”的形式。
 ## 简单实用
 ```
   let promise = new Promise((resolve, reject) => {

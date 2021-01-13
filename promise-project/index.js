@@ -5,8 +5,7 @@ const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
 class MyPromise {
-
-  constructor(excutor) {
+  constructor(executor) {
     this.status = PENDING;
     this.value = void 0;
     this.onFulfilledCallbacks = [];
@@ -36,20 +35,23 @@ class MyPromise {
     }
 
     try {
-      excutor(resolve, reject)
-    } catch(error) {
+      executor(resolve, reject)
+    } catch (error) {
       reject(error)
     }
   }
 
+  catch(onRejected) {
+    return this.then(null, onRejected)
+  }
+
   then(onFulfilled, onRejected) {
-    let self = this;
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
-    onRejected = typeof onRejected === 'function' ? onRejected : error => { throw error };
+    onRejected = typeof onRejected === 'function' ? onRejected : error => { throw error }
     return new MyPromise((resolve, reject) => {
-      function handler(callback) {
+      const handler = (callback) => {
         try {
-          const result = callback(self.value);
+          const result = callback(this.value)
           if(result instanceof MyPromise) {
             result.then(resolve, reject)
           } else {
@@ -59,30 +61,22 @@ class MyPromise {
           reject(error)
         }
       }
-      if(self.status === PENDING) {
-        self.onFulfilledCallbacks.push(() => handler(onFulfilled));
-        self.onRejectedCallbacks.push(() => handler(onRejected));
-      } else if(self.status === FULFILLED) {
-        setTimeout(() => {
-          handler(onFulfilled)
-        })
+      if(this.status === PENDING) {
+        this.onFulfilledCallbacks.push(() => handler(onFulfilled));
+        this.onRejectedCallbacks.push(() => handler(onRejected));
+      } else if(this.status === FULFILLED) {
+        setTimeout(() => handler(onFulfilled))
       } else {
-        setTimeout(() => {
-          handler(onRejected)
-        })
+        setTimeout(() => handler(onRejected))
       }
     })
   }
 
-  catch(onRejected) {
-    return this.then(null, onRejected)
-  }
-
   finally(onFinally) {
     return this.then(value => {
-      return MyPromise.resolve(onFinally()).then(() => value);
+      return MyPromise.resolve(onFinally()).then(() => value)
     }).catch(error => {
-      return MyPromise.resolve(onFinally()).then(() => { throw error });
+      return MyPromise.resolve(onFinally()).then(() => { throw error })
     })
   }
 }
@@ -244,3 +238,77 @@ function bfs(node, nodeList = []) {
 
 const nodes4 = bfs(data)
 console.log(data)
+
+// 发布订阅模式
+class EventEmmiter {
+  constructor() {
+    this.events = this.events || new Map()
+  }
+
+  on(type, callback) {
+    if(!this.events.has(type)){
+      this.events.set(type, callback)
+    }
+  }
+
+  emit(type) {
+    if(this.events.has(type)) {
+      let handler = this.events.get(type)
+      handler.apply(this, Array.from(arguments).slice(1))
+    }
+  }
+
+  off(type) {
+    if(this.events.has(type)) {
+      this.events.delete(type)
+    }
+  }
+
+  once(type, callback) {
+    let self = this;
+    function one() {
+      callback.apply(self, arguments);
+      self.off(type)
+    }
+    this.on(type, one)
+  }
+
+}
+
+const emmiter = new EventEmmiter()
+emmiter.on('click', function(args) {
+  console.log(args)
+})
+emmiter.emit('click', {action: 'click1'})
+emmiter.emit('click', {action: 'click2'})
+emmiter.once('clickOnce', function(args) {
+  console.log(args)
+})
+emmiter.emit('clickOnce', {action: 'clickOnce1'})
+emmiter.emit('clickOnce', {action: 'clickOnce2'})
+
+// 观察者模式
+class Observe {
+  constructor(name) {
+    this.name = name
+  }
+  update() {
+    console.log('update...', this.name)
+  }
+}
+
+class Subscribe {
+  constructor() {
+    this.observers = new Set()
+  }
+
+  addSub(sub) {
+    if(!this.observers.has(sub)) {
+      this.observers.add(sub)
+    }
+  }
+
+  notify() {
+    this.observers.forEach(ob => ob.update())
+  }
+}

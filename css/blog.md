@@ -12,6 +12,15 @@
   2. 垂直居中
   3. css写一个环状进度条
   4. css写一个三角形
+    ```
+      width: 0;
+      height: 0;
+      border-width: 10px;
+      border-top-color: red;
+      border-bottom-color: transparent;
+      border-left-color: transparent;
+      border-right-color: transparent;
+    ``` 
   5. position为relative的元素 可以使用top、left进行定位吗？
     - 可以使用
     - position:relative的特性是相对自身，无侵入。
