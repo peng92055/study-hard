@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,12 +17,50 @@
       border-right-color: red;
       border-style: solid;
     }
+    
+    .loading-box {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border: 8px solid gray;
+      border-top-color: red;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      margin-top: -25px;
+      /*height的一半*/
+      margin-left: -25px;
+      /* transform: ro; */
+      /*width的一半*/
+      animation: loading 1s linear infinite;
+    }
+    
+    @keyframes loading {
+      0% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(90deg);
+      }
+      50% {
+        transform: rotate(180deg);
+      }
+      75% {
+        transform: rotate(270deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <div class="triangle"></div>
+  <div class="loading-box"></div>
 
   <script src="./index.js"></script>
 </body>
+
 </html>

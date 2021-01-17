@@ -10,8 +10,41 @@
       - display的值为table-cell,table-caption或inline-block;
       - position的值不为relative和static
   2. 垂直居中
-  3. css写一个环状进度条
-  4. css写一个三角形
+     ```
+      .parent {
+        display: flex;
+      }
+      .child {
+        align-self: center;
+      }
+     ``` 
+  3. 清除浮动
+    ```
+      .clearfix:before,
+      .clearfix:after {
+        content: " ";
+        /* 1 */
+        display: table;
+        /* 2 */
+      }
+
+      .clearfix:after {
+        clear: both;
+      }
+      .clearfix {
+        zoom: 1;
+      }
+    ``` 
+  4. css写一个环状进度条
+    ```
+      width: 100px;
+      height: 100px;
+      border: 8px solid gray;
+      border-top-color: red;
+      border-radius: 100%;
+      animation: loading 1s linear infinite;
+    ``` 
+  5. css写一个三角形
     ```
       width: 0;
       height: 0;
@@ -21,15 +54,15 @@
       border-left-color: transparent;
       border-right-color: transparent;
     ``` 
-  5. position为relative的元素 可以使用top、left进行定位吗？
+  6. position为relative的元素 可以使用top、left进行定位吗？
     - 可以使用
     - position:relative的特性是相对自身，无侵入。
     - 相对定位元素left/top/right/bottom的百分比值是相对于包含块计算，而不是自身。
     - relative最小化影响原则
-  6. 盒模型
+  7. 盒模型
     - 标准盒模型： width=content  box-sizing: content-box
     - IE盒模型： width=content+padding+border  box-sizing: border-box
-  7. 文本单行和多行溢出省略
+  8. 文本单行和多行溢出省略
     - 单行
       ```
         overflow: hidden;

@@ -6,7 +6,7 @@
     // react diff
     function updateChildren(nextChildren, prevChildren) {
       let lastIndex = 0;
-      for(let i = 0; i < vnode.length; i++) {
+      for(let i = 0; i < nextChildren.length; i++) {
         const nextVNode = nextChildren[i]
         let j = 0;
         find = false; //是否找到原始节点
