@@ -203,6 +203,72 @@
   console.log(myParseInt(nums))
 ```
 
+### 字符串取反
+  ```
+    function processString(s) {
+      return s.split("").map(char => {
+        char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
+      }).join("")
+    }
+  ```
+
+### 实现一个字符串匹配算法，从长度为 n 的字符串 S 中，查找是否存在字符串 T，T 的长度是 m，若存在返回所在位置
+  ```
+    function find(S,T) {
+      if(S.length < T.length) return -1
+      for(let i = 0; i < S.length - T.length; i++) {
+        if(S.subStr(i, T.length) === T) return i;
+      }
+      return -1;
+    }
+  ```
+
+### 打印出 1 - 10000 之间的所有对称数 例如 121、1331 等
+  ```
+    function print(max) {
+      return [...new Array(max).keys()].filter(item => {
+        item = item++;
+        return item.toString().length > 1 && item === Number(item.toString().split("").reverse().join(""))
+      })
+    }
+    print(1000)
+  ```
+
+### 给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+  ```
+    function move(nums) {
+      let length = nums.length;
+      let j = 0;
+      for(let i = 0; i < length - j; i++) {
+        if(nums[i] === 0) {
+          nums.push(0);
+          nums.splice(i, 1);
+          i--;
+          j++;
+        }
+      }
+      return nums
+    }
+    let nums = [0,1,0,3,12]
+    console.log(move(nums))
+  ```
+
+### 请实现一个 add 函数，满足以下功能add(1),add(1)(2),add(1,2)(3)(4)
+  ```
+    function add() {
+      let args = [...arguments]
+      let fn = function() {
+        let fn_args = [...arguments]
+        return add.apply(null, args.concat(fn_args))
+      }
+      fn.toString = function() {
+        return args.reduce((a, b) => a + b)
+      }
+      return fn
+    }
+    add(1,2)(3)(4);
+  ```
+
 ## 常用正则
   - trim: /(^\s*)|(\s*$)/g
   - 数字  /^[0-9]*$/
@@ -224,5 +290,3 @@
   ``` 
 
 ### 参考[https://juejin.cn/post/6844903891591495693]
-
-

@@ -102,6 +102,7 @@
   - callHook(vm, 'beforeUpdate')
   - 通过事件循环机制，在下一个执行周期中执行flushSchedulerQueue()
   - 异步获取更新任务watcher,watcher在队列中是不可重复的。所以如果在上一个周期中多次同步更新变量，在这里通过watcher会拿到最终值。
+  - watcher.before -> 执行beforeUpdate钩子
   - watcher.run() -> 执行watcher的run方法。
   - watcher.get() -> this.getter.call() -> updateComponent() -> _render() -> _update() -> patch() -> patchVnode() -> updateChildren()
   - 此时已经更新完真实dom
@@ -129,6 +130,41 @@
   - watcher.newDeps.push(dep) -> 
   - dep.addSub(new Watcher()) -> 
   - dep.subs.push(watcher)
+
+### 生命周期
+  - beforeCreate
+    - new Vue()的第一个钩子，初始化实例上的属性、事件和渲染(包括插槽对象)函数。并给实例绑定响应式的$listener和$attrs
+  - create
+    - 在此钩子执行前，获取注入数据，初始化props,methods,data,computed,watch。
+    - 对属性和data中的数据完成了数据观测，但是还未进行依赖收集
+    - 对computed和watch进行初始化，并进行了数据的依赖收集
+    - 可以对数据进行更改，但是不会触发updated函数，也不能与Dom交互，如果一定要操作，可以使用vm.$nextTick来访问dom
+  - beforeMounted
+    - 在此钩子执行前，得到真实的根节点，根据是否传递el来自动执行$mount或者等待手动执行$mount。
+    - 执行mountComponent()方法，获取渲染函数（render）
+      - 获取渲染函数三部曲 parse -> optimize -> generate
+  - mounted
+    - 在此钩子前，定义updateComponent方法，updateComponent = () => update(render())
+    - 实例化Watcher,并传递updateComponent做为更新函数
+    - 在Watcher的构造函数中，执行this.get()方法，并触发一次更新函数
+    - 执行render(),通过createElement生成虚拟Dom也就是VNode,并触发get方法进行依赖收集
+    - 执行update(),挂载到真实dom
+      - 内部执行vm.__patch__,也就是patch方法，传递（vm.$el, vnode）
+        - patch方法由createPatchFunction工厂函数构造而来
+        - 判断是老节点是真实节点，则直接创建新的节点
+    - 此阶段已经完成真实Dom的挂载，数据完成双向绑定，可以访问节点，可以使用$refs属性操作dom
+  - beforeUpdate
+    - 此阶段可以更新数据，触发对象属性的set的方法，调用dep.notify()
+    - 获取所有的watcher，调用watcher.update(),通过异步队列机制来更新
+    - 调用watcher.before()
+    - 此阶段可以更改数据，不会造成重新渲染
+  - updated
+    - 在此之前，执行watcher.run()，执行真正的更新函数 render() -> updated()
+    - 已经完成dom更新，避免在此阶段更改数据，会导致无限循环更新
+  - beforeDestory
+    - 实例销毁前，在此处清理定时器
+  - destoryed
+    - 发生在实例销毁后，只剩下dom空壳子，组件已经被拆解，数据绑定被卸除，监听被移除，子实例也被销毁完成。
 
 ## vue2
 - Vue源码剖析之整体流程：http://t.kuick.cn/RIUp
