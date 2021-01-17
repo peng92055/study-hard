@@ -301,6 +301,23 @@
   - 手机号 /^1[3-9]\d{9}$/
   - 邮箱  /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
 
+### 找出字符串中连续出现最多的字符和个数
+  ```
+    'abcaakjbb' => {'a':2,'b':2}
+    'abbkejsbcccwqaa' => {'c':3}
+
+    const arr = str.match(/(\w)\1*/g);  // str.match(/(\w)\1+/g)
+    const maxLen = Math.max(...arr.map(s => s.length));
+    const result = arr.reduce((pre, curr) => {
+      if (curr.length === maxLen) {
+        pre[curr[0]] = curr.length;
+      }
+      return pre;
+    }, {});
+
+    console.log(result);
+  ```
+
 ## 金额格式化
   - 将100000000000 格式化为100,000,000.000  每三位进行分割
   ```
