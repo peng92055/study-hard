@@ -269,6 +269,31 @@
     add(1,2)(3)(4);
   ```
 
+### 用 JavaScript 写一个函数，输入 int 型，返回整数逆序后的字符串。如：输入整型 1234，返回字符串“4321”。要求必须使用递归函数调用，不能用全局变量，输入函数必须只有一个参数传入，必须返回字符串。
+  ```
+    function convert(num) {
+      let num1 = num / 10;
+      let num2 = num % 10;
+      if(num1 < 1) {
+        return num
+      } else {
+        num1 = Math.floor(num1);
+        return `${num2}${convert(num1)}`
+      }
+    }
+    convert(198320)
+  ```
+  打印0-99
+  function print(n){
+    setTimeout((() => {
+      console.log(n);
+      return () => {}
+    }).call(null, []), Math.floor(Math.random() * 1000));
+  }
+  for(var i = 0; i < 10; i++){
+    print(i);
+  }
+
 ## 常用正则
   - trim: /(^\s*)|(\s*$)/g
   - 数字  /^[0-9]*$/
@@ -288,5 +313,69 @@
     // 寻找数字并在其后面加 . 
     '10000000000'.replace(/(\d)(?=(\d{3})+\b)/g, '$1.')
   ``` 
+
+### 编程题，写个程序把 entry 转换成如下对象 
+```
+  var entry = {
+    'a.b.c.dd': 'abcdd',
+    'a.d.xx': 'adxx',
+    'a.e': 'ae'
+  }
+  var output = {
+    a: {
+      b: {
+        c: {
+          dd: 'abcdd'
+        }
+      },
+      d: {
+        xx: 'adxx'
+      },
+      e: 'ae'
+    }
+  }
+
+  function convert(entry) {
+    const res = Object.create(null)
+    for (let key in entry) {
+      const keys = key.split(".");
+      if (keys.length == 1) {
+        res[key] = entry[key]
+      } else {
+        keys.reduce((prev, curr, index) => {
+          if (index === keys.length - 1) {
+            return prev[curr] = entry[key]
+          } else {
+            prev[curr] = prev[curr] || {};
+            return prev[curr]
+          }
+        }, res)
+      }
+    }
+    return res
+  }
+```
+
+### 编程题，写个程序把 entry 转换成如下对象 
+```
+  var entry = {
+    a: {
+      b: {
+        c: {
+          dd: 'abcdd'
+        }
+      },
+      d: {
+        xx: 'adxx'
+      },
+      e: 'ae'
+    }
+  }
+  var output = {
+    'a.b.c.dd': 'abcdd',
+    'a.d.xx': 'adxx',
+    'a.e': 'ae'
+  }
+ ``` 
 
 ### 参考[https://juejin.cn/post/6844903891591495693]

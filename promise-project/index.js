@@ -377,3 +377,43 @@ function autoRefetch(url, max) {
 }
 
 autoRefetch('api/login', 3).catch(err => console.log(err))
+
+var entry = {
+  a: {
+    b: {
+      c: {
+        dd: 'abcdd'
+      }
+    },
+    d: {
+      xx: 'adxx'
+    },
+    e: 'ae'
+  }
+}
+
+var output = {
+  'a.b.c.dd': 'abcdd',
+  'a.d.xx': 'adxx',
+  'a.e': 'ae'
+}
+
+function convert(entry) {
+  const res = Object.create(null);
+  const noop = (obj, prefix = '', result = {}) => {
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        let keyName = `${prefix}${key}`;
+        if (typeof obj[key] === 'object') {
+          noop(obj[key], keyName + '.', result)
+        } else {
+          result[keyName] = obj[key];
+        }
+      }
+    }
+  }
+  noop(entry, '', res)
+  return res
+}
+
+console.log('convert1: ', convert(entry))
