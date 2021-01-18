@@ -186,7 +186,6 @@ const data = {
 }
 
 function dfs1(node, nodeList = []) {
-  console.log('dfs1', node.name)
   if (!node) return nodeList;
   nodeList.push(node)
   let children = node.children
@@ -207,7 +206,6 @@ function dfs2(node, nodeList = []) {
   console.log(stack)
   while (stack.length) {
     let n = stack.pop();
-    console.log('dfs2', n.name)
     nodeList.push(n);
     let children = n.children;
     if (children) {
@@ -225,7 +223,6 @@ function bfs(node, nodeList = []) {
   quene.push(node);
   while (quene.length) {
     let n = quene.shift(); //取出第一个
-    console.log('bfs', n.name)
     nodeList.push(n)
     let children = n.children;
     if (children) {
@@ -417,3 +414,49 @@ function convert(entry) {
 }
 
 console.log('convert1: ', convert(entry))
+
+let list =[
+  {id:1,name:'部门A',parentId:0},
+  {id:2,name:'部门B',parentId:0},
+  {id:3,name:'部门C',parentId:1},
+  {id:4,name:'部门D',parentId:1},
+  {id:5,name:'部门E',parentId:2},
+  {id:6,name:'部门F',parentId:3},
+  {id:7,name:'部门G',parentId:2},
+  {id:8,name:'部门H',parentId:4}
+];
+let result = convert2(list);
+function convert2(array) {
+  let res = [];
+  let map = array.reduce((prev, curr) => (prev[curr.id] = curr, prev), {});
+  for(let item of Object.values(map)) {
+    if(item.parentId === 0) {
+      res.push(item)
+      continue
+    } else if(item.parentId in map) {
+      let parent = map[item.parentId]
+      parent.children = parent.children || [];
+      parent.children.push(item)
+    }
+  }
+  return res
+}
+console.log(result)
+
+function wait() {
+  return new Promise(resolve =>
+    setTimeout(resolve, 2 * 1000)
+  )
+}
+  
+async function main() {
+  console.time();
+  const x = wait();
+  const y = wait();
+  const z = wait();
+  await x;
+  await y;
+  await z;
+  console.timeEnd();
+}
+main();
