@@ -460,3 +460,31 @@ async function main() {
   console.timeEnd();
 }
 main();
+
+Array.prototype._splice = function(start, deleteCount, ...addList) {
+  console.log(start, deleteCount, addList)
+  if(start < 0) {
+    start = Math.abs(start) > this.length ? 0 : start + this.length
+  }
+  if(typeof deleteCount === 'undefined') {
+    deleteCount = this.length - start
+  }
+  const removeList = this.slice(start, start + deleteCount);
+  
+  //更改原数组
+  const right = this.slice(start + deleteCount)
+  let addIndex = start
+  addList.concat(right).forEach(item => {
+    this[addIndex] = item;
+    addIndex++;
+  })
+  this.length = addIndex
+
+  return removeList
+}
+let spliceArr = [1,2,3,4,5,6];
+let spliceResult = spliceArr._splice(1,2,9,8,7,8,9);
+let spliceArr2 = [1,2,3,4,5,6];
+let spliceResult2 = spliceArr2.splice(1,2,9,8,7,8,9);
+console.log('old: ',spliceResult2, spliceArr2)
+console.log('new: ', spliceResult, spliceArr)

@@ -131,6 +131,42 @@ MyPromise.all = function(promises) {
   })
 }
 
+
+MyPromise.allSettled = function(promises) {
+  let resolveCount = 0;
+  const length = promises.length;
+  const resolveValues = new Array(length);
+  return new MyPromise((resolve, reject) => {
+    promises.forEach((promise, index) => {
+      MyPromise.resolve(promise).then(value => {
+        resolveValues[index] = value;
+      }).catch(err => {
+        resolveValues[index] = err;
+      }).finally(() => {
+        resolveCount++;
+        if (resolveCount >= length) {
+          resolve(resolveValues)
+        }
+      })
+    })
+  })
+}
+
+MyPromise.retry = function(fn, times) {
+  return new MyPromise((resolve, reject) => {
+    while(times) {
+      try {
+        const res = await fn
+        resolve(res)
+        times = 0
+      } catch (error) {
+        if(!times) reject(e)
+      }
+      times--
+    }
+  })
+}
+
 // const promise = new MyPromise((resolve, reject) => {
 //   console.log('promise test start...')
 //   setTimeout(() => {

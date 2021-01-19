@@ -70,10 +70,28 @@
                   callback();
                 }
               );
+              // other
+              compiler.plugin('event', (compilation, callback) => {
+                // 这种形式就表明这是一个异步事件
+                // 处理结束后需要调用callback参数，否则流程会被一直卡在这里不会向下运行
+                callback()
+              })
             }
           }
         ```
     - 编写plugin时，可以访问compiler和compilation,通过钩子webpack执行。
+    - 事件流主要流程：
+      - entry-option：初始化options
+      - run：开始编译
+      - make：从entry开始递归的分析依赖，对每个依赖模块进行build
+      - before-resolve - after-resolve： 对其中一个模块位置进行解析
+      - build-module ：开始构建 (build) 这个module,这里将使用文件对应的loader加载
+      - normal-module-loader：对用loader加载完成的module(是一段js代码)进行编译,用 acorn 编译,生成ast抽象语法树。
+      - program： 开始对ast进行遍历，当遇到require等一些调用表达式时，触发 call require 事件的handler执行，收集依赖，并。如：AMDRequireDependenciesBlockParserPlugin等
+      - seal： 所有依赖build完成，下面将开始对chunk进行优化，比如合并,抽取公共模块,加hash
+      - optimize-chunk-assets：压缩代码，插件 UglifyJsPlugin 就放在这个阶段
+      - bootstrap： 生成启动代码
+      - emit： 把各个chunk输出到结果文件
   
 ## loader和plugin的区别,常用的loader和plugin
  - loader是一个function 
@@ -168,4 +186,54 @@
     })
   ```
 
-## 参考 [https://mp.weixin.qq.com/s/2GaTS9_-ErJf15AIAFdoLw]
+### webpack异步加载原理
+  - 首先异步加载的模块，webpack在打包的时候会将独立打包成一个js文件（webpack如何将异步加载的模块独立打包成一个文件）(打包出来的文件开头(window["webpackJsonp"]=window["webpackJsonp"]||[]).push()）
+  - 然后需要加载异步模块的时候：
+  - 2.1 创建script标签，src为请求该异步模块的url，并添加到document.head里，由浏览器发起请求。
+  - 2.2 请求成功后，将异步模块添加到全局的__webpack_require__变量(该对象是用来管理全部模块)后
+  - 2.3 请求异步加载文件的import()编译后的方法会从全局的__webpack_require__变量中找到对应的模块
+  - 2.4 执行相应的业务代码并删除之前创建的script标签
+  - 异步加载文件里的import()里的回调方法的执行时机，通过利用promise的机制来实现的
+
+  - webpackJsonp：chunk文件加载后的callback函数，主要将文件中的模块存储到modules对象中，同时标记chunk文件的下载情况，对于入口chunk来说，等所有的模块都放入modules之后，执行入口模块函数。
+
+  - __webpack_require__：模块加载函数，加载的策略是：根据moduleid读取，优先读取缓存installedModules，读取失败则读取modules，获取返回值，然后进行缓存。
+
+### 插件功能：自动生成README文件，标题取自插件option 
+
+ ```
+  const MY_PLUGIN_NAME = "MyReadMePlugin";  
+  
+  // 插件功能：自动生成README文件，标题取自插件option  
+  class MyReadMePlugin {  
+    
+    constructor(option) {  
+      this.option = option || {};  
+    }  
+    
+    apply(compiler) {  
+      compiler.hooks.emit.tapAsync(  
+        MY_PLUGIN_NAME,  
+        (compilation, callback) => {  
+          compilation.assets["README.md"] = {  
+            // 文件内容  
+            source: () => {  
+              return `# ${this.option.title || '默认标题'}`;  
+            },  
+            // 文件大小  
+            size: () => 30,  
+          };  
+          callback();  
+        }  
+      );  
+    }  
+  }  
+    
+  // 7、模块导出  
+  module.exports = MyReadMePlugin;  
+ ```
+
+
+## 参考 
+- [https://mp.weixin.qq.com/s/2GaTS9_-ErJf15AIAFdoLw]
+- [https://www.cnblogs.com/libin-1/p/6938581.html]
