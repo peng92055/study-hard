@@ -99,7 +99,6 @@
   - 获取dep中的所有观察者watcher,循环调用watcher.update()
   - watcher中，update通过异步更新机制来更新 queneWatcher(this) 将更新任务放进异步更新队列
     - quene.push(watcher) -> nextTick(flushSchedulerQueue) -> timerFunc() -> 获取当前环境的异步更新支持情况执行，优先Promise
-  - callHook(vm, 'beforeUpdate')
   - 通过事件循环机制，在下一个执行周期中执行flushSchedulerQueue()
   - 异步获取更新任务watcher,watcher在队列中是不可重复的。所以如果在上一个周期中多次同步更新变量，在这里通过watcher会拿到最终值。
   - watcher.before -> 执行beforeUpdate钩子
