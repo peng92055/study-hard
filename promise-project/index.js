@@ -488,3 +488,24 @@ let spliceArr2 = [1,2,3,4,5,6];
 let spliceResult2 = spliceArr2.splice(1,2,9,8,7,8,9);
 console.log('old: ',spliceResult2, spliceArr2)
 console.log('new: ', spliceResult, spliceArr)
+
+function binarySearch(array, target) {
+  let length = array.length;
+  const noop = (start, end) => {
+    if(start > end) return -1
+    let mid = Math.floor((start + end) / 2 )
+    if(target === array[mid]) {
+      return mid
+    } else if(target > array[mid]) {
+      return noop(mid + 1, end)
+    } else {
+      return noop(start, mid - 1)
+    }
+  }
+  return noop(0, length - 1)
+}
+
+let binaryArray = [1,3,8,13,23,34,45,66,78]
+console.log('binary array: ', binarySearch(binaryArray, 8));
+console.log('binary array: ', binarySearch(binaryArray, 45));
+console.log('binary array: ', binarySearch(binaryArray, 65));
