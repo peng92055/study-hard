@@ -430,7 +430,7 @@ function convert2(array) {
   let res = [];
   let map = array.reduce((prev, curr) => (prev[curr.id] = curr, prev), {});
   for(let item of Object.values(map)) {
-    if(item.parentId === 0) {
+    if(!item.parentId) {
       res.push(item)
       continue
     } else if(item.parentId in map) {
@@ -442,6 +442,15 @@ function convert2(array) {
   return res
 }
 console.log(result)
+const input = [
+  {id:1,val:'school', parentId:null},
+  {id:2,val:'class01', parentId:1},
+  {id:3,val:'class02', parentId:1},
+  {id:4,val:'stu01', parentId:2},
+  {id:5,val:'stu02', parentId:2},
+  {id:6,val:'stu03', parentId:3},
+]
+console.log('renren', convert2(input))
 
 function wait() {
   return new Promise(resolve =>
